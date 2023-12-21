@@ -26,11 +26,29 @@ sap.ui.define([
 		},
 
 		readImageFile: function(oFile) {
+			var that = this;
 			var oReader = new FileReader();
 			oReader.onload = function(e) {
 				var sImageData = e.target.result;
-				this.extractTextFromImage(sImageData);
-				this.byId("uploadedImage").setSrc(sImageData);
+				var size = e.total;
+				if (size < 1000000) {
+					this.extractTextFromImage(sImageData);
+					this.byId("uploadedImage").setSrc(sImageData);
+				} else {
+					var oImage = new Image();
+					oImage.src = sImageData;
+					oImage.onload = function() {
+						var oCanvas = document.createElement("canvas");
+						oCanvas.width = 500;
+						oCanvas.height = 500;
+						var oContext = oCanvas.getContext("2d");
+						oContext.globalAlpha = 1;
+						oContext.drawImage(this, 0, 0, 500, 500);
+						var sBase64 = oCanvas.toDataURL("image/jpeg", 1.0);
+						that.extractTextFromImage(sBase64);
+						that.byId("uploadedImage").setSrc(sBase64);
+					};
+				}
 				this.byId("extractedText").setVisible(true);
 				this.byId("extractedText").setValue("");
 			}.bind(this);
@@ -62,7 +80,11 @@ sap.ui.define([
 						that.byId("extractedText").setValue(sExtractedText);
 					} else {
 						BusyIndicator.hide();
-						MessageBox.error("No text extracted from the image.");
+						MessageBox.error(data.ErrorDetails);
+						that.byId("uploadedImage").setSrc("");
+						that.byId("extractedText").setValue("");
+						that.byId("extractedText").setVisible(false);
+						that.byId("fileUploader").clear();
 					}
 				},
 				error: function(error) {
@@ -70,6 +92,8 @@ sap.ui.define([
 					MessageBox.error("OCR API Error:", error);
 					that.byId("uploadedImage").setSrc("");
 					that.byId("extractedText").setValue("");
+					that.byId("extractedText").setVisible(false);
+					that.byId("fileUploader").clear();
 				}
 			});
 		},
