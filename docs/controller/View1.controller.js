@@ -7,6 +7,14 @@ sap.ui.define([
 
 	return Controller.extend("Image2Text.controller.View1", {
 
+		onInit: function() {
+			if (sap.ui.Device.system.phone) {
+				this.byId("HBox").setDirection("Column");
+				this.byId("uploadedImage").setWidth("100%");
+				this.byId("extractedText").setWidth("100%");
+			}
+		},
+
 		onFileUpload: function(oEvent) {
 			var oFileUploader = oEvent.getSource();
 			var aFiles = oEvent.getParameter("files");

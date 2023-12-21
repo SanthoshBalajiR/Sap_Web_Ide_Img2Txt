@@ -13,7 +13,7 @@
 				<content>
 					<VBox alignItems="Center">
 						<u:FileUploader id="fileUploader" change="onFileUpload" buttonText="Upload"/>
-						<HBox alignContent="SpaceBetween">
+						<HBox id="HBox">
 							<Image id="uploadedImage" width="630px" height="420px"/>
 							<TextArea id="extractedText" width="630px" height="420px" visible="false"/>
 						</HBox>
