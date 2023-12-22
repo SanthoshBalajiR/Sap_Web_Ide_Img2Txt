@@ -31,20 +31,33 @@ sap.ui.define([
 			var sImageData = this.byId("editor").getImageEditor();
 			var oCanvas = sImageData._oCanvas;
 			var sBase64 = oCanvas.toDataURL("image/jpeg", 1.0);
-			var size = sImageData._oOriginalBlob.size
-			if (size > 1000000) {
+			var stringLength = sBase64.length - 'data:image/png;base64,'.length;
+			var sizeInBytes = 4 * Math.ceil((stringLength / 3)) * 0.5624896334383812;
+			var sizeInMb = sizeInBytes / 1048576;
+			var width = 1350;
+			var height = 1350;
+			if (sizeInBytes > 1000000) {
 				var oImage = new Image();
 				oImage.src = sBase64;
 				oImage.onload = function() {
-					var oCanvas = document.createElement("canvas");
-					oCanvas.width = 500;
-					oCanvas.height = 500;
-					var oContext = oCanvas.getContext("2d");
-					oContext.globalAlpha = 1;
-					oContext.drawImage(this, 0, 0, 500, 500);
-					var sBase64 = oCanvas.toDataURL("image/jpeg", 1.0);
-					that.extractTextFromImage(sBase64);
-				}
+					while (sizeInBytes > 1000000) {
+						var oCanvas = document.createElement("canvas");
+						oCanvas.width = width;
+						oCanvas.height = height;
+						var oContext = oCanvas.getContext("2d");
+						oContext.globalAlpha = 1;
+						oContext.drawImage(this, 0, 0, width, height);
+						var sBase64 = oCanvas.toDataURL("image/jpeg", 1.0);
+						stringLength = sBase64.length - 'data:image/png;base64,'.length;
+						sizeInBytes = 4 * Math.ceil((stringLength / 3)) * 0.5624896334383812;
+						sizeInMb = sizeInBytes / 1048576;
+						if (sizeInBytes < 1000000) {
+							that.extractTextFromImage(sBase64);
+						}
+						width = width - 50;
+						height = height - 50;
+					}
+				};
 			} else {
 				this.extractTextFromImage(sBase64);
 			}
