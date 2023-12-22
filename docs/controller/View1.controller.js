@@ -27,15 +27,27 @@ sap.ui.define([
 		},
 
 		onExtractPress: function() {
+			var that = this;
 			var sImageData = this.byId("editor").getImageEditor();
 			var oCanvas = sImageData._oCanvas;
-			oCanvas.width = 500;
-			oCanvas.height = 500;
-			var oContext = oCanvas.getContext("2d");
-			oContext.globalAlpha = 1;
-			oContext.drawImage(this, 0, 0, 500, 500);
 			var sBase64 = oCanvas.toDataURL("image/jpeg", 1.0);
-			this.extractTextFromImage(sBase64);
+			var size = sImageData._oOriginalBlob.size
+			if (size > 1000000) {
+				var oImage = new Image();
+				oImage.src = sBase64;
+				oImage.onload = function() {
+					var oCanvas = document.createElement("canvas");
+					oCanvas.width = 500;
+					oCanvas.height = 500;
+					var oContext = oCanvas.getContext("2d");
+					oContext.globalAlpha = 1;
+					oContext.drawImage(this, 0, 0, 500, 500);
+					var sBase64 = oCanvas.toDataURL("image/jpeg", 1.0);
+					that.extractTextFromImage(sBase64);
+				}
+			} else {
+				this.extractTextFromImage(sBase64);
+			}
 		},
 
 		readImageFile: function(oFile) {
@@ -43,7 +55,7 @@ sap.ui.define([
 			var oReader = new FileReader();
 			oReader.onload = function(e) {
 				var sImageData = e.target.result;
-				var size = e.total;
+				// var size = e.total;
 				// if (size < 1000000) {
 				// this.extractTextFromImage(sImageData);
 				this.byId("uploadedImage").setSrc(sImageData);
