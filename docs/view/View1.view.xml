@@ -1,5 +1,5 @@
 <mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:u="sap.ui.unified"
-	controllerName="Image2Text.controller.View1" displayBlock="true">
+	controllerName="Image2Text.controller.View1" displayBlock="true" xmlns:img="sap.suite.ui.commons.imageeditor">
 	<App>
 		<pages>
 			<Page>
@@ -11,13 +11,34 @@
 					</Toolbar>
 				</customHeader>
 				<content>
-					<VBox alignItems="Center">
-						<u:FileUploader id="fileUploader" change="onFileUpload" buttonText="Upload"/>
-						<HBox id="HBox">
-							<Image id="uploadedImage" width="630px" height="420px"/>
-							<TextArea id="extractedText" width="630px" height="420px" visible="false"/>
-						</HBox>
-					</VBox>
+					<img:ImageEditorContainer id="editor" enabledButtons="Crop" mode="Crop">
+						<img:ImageEditor id="uploadedImage"/>
+						<img:customToolbarControls>
+							<u:FileUploader id="fileUploader" change="onFileUpload" buttonText="Upload"/>
+							<Button id="extract" text="Extract" press="onExtractPress" type="Accept" enabled="false"/>
+						</img:customToolbarControls>
+						<!--<img:customResizeItems>-->
+						<!--	<img:CustomSizeItem width="1920" height="1200" label="1920 x 1200" relative="false"/>-->
+						<!--	<img:CustomSizeItem width="1600" height="900" label="1600 x 900" relative="false"/>-->
+						<!--	<img:CustomSizeItem width="1440" height="900" label="1440 x 900" relative="false"/>-->
+						<!--	<img:CustomSizeItem width="1024" height="768" label="1024 x 768" relative="false"/>-->
+						<!--	<img:CustomSizeItem width="2" height="2" label="double size" relative="true"/>-->
+						<!--	<img:CustomSizeItem width="0.5" height="0.5" label="half size" relative="true"/>-->
+						<!--	<img:CustomSizeItem width="2" height="1" label="make wider" relative="true"/>-->
+						<!--	<img:CustomSizeItem width="1" height="2" label="make higher" relative="true"/>-->
+						<!--</img:customResizeItems>-->
+						<img:customRectangleCropItems>
+							<img:CustomSizeItem width="16" height="9" label="16:9" relative="true"/>
+							<img:CustomSizeItem width="16" height="10" label="16:10" relative="true"/>
+							<img:CustomSizeItem width="1" height="1" label="1:1" relative="true"/>
+							<img:CustomSizeItem width="4" height="3" label="4:3" relative="true"/>
+						</img:customRectangleCropItems>
+						<!--<img:customEllipseCropItems>-->
+						<!--	<img:CustomSizeItem width="1" height="1" label="1:1" relative="true"/>-->
+						<!--	<img:CustomSizeItem width="2" height="1" label="2:1" relative="true"/>-->
+						<!--</img:customEllipseCropItems>-->
+					</img:ImageEditorContainer>
+					<TextArea id="extractedText" width="100%" height="100%" visible="false"/>
 				</content>
 			</Page>
 		</pages>
